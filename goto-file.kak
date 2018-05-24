@@ -1,34 +1,37 @@
-decl -hidden str goto_file_suffix ''
-decl -hidden str goto_index_suffix ''
+# in some languages the file extension is optional
+declare-option -hidden str goto_file_suffix ''
+declare-option -hidden str goto_index_suffix ''
 
-hook global WinSetOption filetype=javascript %{
-  set buffer goto_file_suffix '.js'
-  set buffer goto_index_suffix '/index.js'
+hook global WinSetOption filetype=(javascript|ecmascript) %{
+  # require() / import from
+  set-option buffer goto_file_suffix '.js'
+  set-option buffer goto_index_suffix '/index.js'
 }
 
-def goto-file -docstring 'goto file-path in first string on current line' %{
+define-command goto-file -docstring 'goto filepath in string on current line' %{
   # select-next-string
-  exec gh/['"][^'"\n]*?['"]<ret>
+  execute-keys gh/['"][^'"\n]*?['"]<ret>
   # shrink-selection
-  exec '<a-:>H<a-;>L'
+  execute-keys '<a-:>H<a-;>L'
   # relative path handling
-  decl -hidden str goto_dir "%sh{dirname $kak_buffile}/"
+  declare-option -hidden str goto_dir "%sh{dirname \"$kak_buffile\"}/"
 
   try %{
+    # relative path without suffix
     edit -existing "%opt{goto_dir}%val{selection}"
+  } catch %{ try %{
+    # with file suffix
+    edit -existing "%opt{goto_dir}%val{selection}%opt{goto_file_suffix}"
+  } catch %{ try %{
+    # with index suffix
+    edit -existing "%opt{goto_dir}%val{selection}%opt{goto_index_suffix}"
+  } catch %{ try %{
+    # package.json.main in node_modules
+    declare-option -hidden str goto_main "%sh{main=\"$(npm view $kak_selection main)\"; [ -n \"$main\" ] && echo \"$main\" || echo 'index.js'}"
+    edit -existing "%sh{npm root}/%val{selection}/%opt{goto_main}"
   } catch %{
-    try %{
-      # with file suffix
-      edit -existing "%opt{goto_dir}%val{selection}%opt{goto_file_suffix}"
-    } catch %{
-      try %{
-        # with index suffix
-        edit -existing "%opt{goto_dir}%val{selection}%opt{goto_index_suffix}"
-      } catch %{
-        echo "gf: files not found %opt{goto_dir}%val{selection} (%opt{goto_file_suffix}|%opt{goto_index_suffix})"
-      }
-    }
-  }
+    echo -markup {Error} "gf: files not found %opt{goto_dir}%val{selection} (%opt{goto_file_suffix}|%opt{goto_index_suffix})"
+  }}}}
 }
 
 # Suggested mappings
