@@ -14,7 +14,7 @@ define-command goto-file -docstring 'goto filepath in string on current line' %{
   # shrink-selection
   execute-keys '<a-:>H<a-;>L'
   # relative path handling
-  declare-option -hidden str goto_dir "%sh{dirname \"$kak_buffile\"}/"
+  declare-option -hidden str goto_dir "%sh{dirname ""$kak_buffile""}/"
 
   try %{
     # relative path without suffix
