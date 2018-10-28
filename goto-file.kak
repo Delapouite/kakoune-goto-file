@@ -30,7 +30,7 @@ define-command goto-file -docstring 'goto filepath in string on current line' %{
     declare-option -hidden str goto_main "%sh{main=\"$(npm view $kak_selection main)\"; [ -n \"$main\" ] && echo \"$main\" || echo 'index.js'}"
     edit -existing "%sh{npm root}/%val{selection}/%opt{goto_main}"
   } catch %{
-    echo -markup {Error} "gf: files not found %opt{goto_dir}%val{selection} (%opt{goto_file_suffix}|%opt{goto_index_suffix})"
+    fail "gf: files not found %opt{goto_dir}%val{selection} (%opt{goto_file_suffix}|%opt{goto_index_suffix})"
   }}}}
 }
 
