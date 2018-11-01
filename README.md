@@ -6,6 +6,16 @@
 
 Add `goto-file.kak` to your autoload dir: `~/.config/kak/autoload/`.
 
+Or via [plug.kak](https://github.com/andreyorst/plug.kak):
+
+```
+plug 'delapouite/kakoune-goto-file' %{
+  # Suggested mappings
+  map global goto f '<esc>: goto-file<ret>' -docstring 'file'
+  map global goto F f -docstring 'file (legacy)'
+}
+```
+
 ## Usage
 
 Kakoune provides a `gf` command to jump to the path highlighted by the main selection.
@@ -46,17 +56,11 @@ const fs = require('fs')
 To jump backward you can use the `<c-o>` as usual (and `<c-i>` to jump forward).
 Also `ga` lets you go back and forth between the current and previous buffer.
 
-```
-# Suggested mappings
-
-map global goto f '<esc>:goto-file<ret>' -docstring 'file'
-map global goto F f -docstring 'file (legacy)'
-```
-
 ## See also
 
 - [kakoune-cd](https://github.com/Delapouite/kakoune-cd)
 - [kakoune-npm](https://github.com/Delapouite/kakoune-npm)
+- [kak-lsp](https://github.com/ul/kak-lsp) - for goto definition support
 
 ## Licence
 
