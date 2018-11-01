@@ -8,6 +8,12 @@ hook global WinSetOption filetype=(javascript|ecmascript) %{
   set-option buffer goto_index_suffix '/index.js'
 }
 
+hook global WinSetOption filetype=(typescript) %{
+  # import from
+  set-option buffer goto_file_suffix '.ts'
+  set-option buffer goto_index_suffix '/index.ts'
+}
+
 define-command goto-file -docstring 'goto filepath in string on current line' %{
   # select-next-string
   execute-keys gh /['"][^'"\n]*?['"]<ret>
@@ -36,5 +42,5 @@ define-command goto-file -docstring 'goto filepath in string on current line' %{
 
 # Suggested mappings
 
-#map global goto f '<esc>:goto-file<ret>' -docstring 'file'
+#map global goto f '<esc>: goto-file<ret>' -docstring 'file'
 #map global goto F f -docstring 'file (legacy)'
